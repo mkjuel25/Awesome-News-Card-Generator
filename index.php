@@ -125,7 +125,6 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Awesome News Card Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* This maintains the 3:2 aspect ratio for the image */
         .card-img-container {
@@ -269,46 +268,11 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                    </svg>
                                 </a>
-                                <button class="download-card-btn ignore-in-screenshot mt-4 bg-green-500 text-white p-2 text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 w-full"
-                                        data-card-id="${cardId}"
-                                        data-filename="${(displayHeadline.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50) || 'card')}.png">
-                                    Download Card as Image
-                                </button>
                             </div>
                         </div>
                     `;
                     cardsContainer.insertAdjacentHTML('afterbegin', cardHtml); // Add new card at the top
                     urlInput.value = ''; // Clear input
-
-                    // Attach event listener to the newly added download button
-                    document.querySelector(`#${cardId} .download-card-btn`).addEventListener('click', function() {
-                        const targetCardId = this.getAttribute('data-card-id');
-                        const fileName = this.getAttribute('data-filename');
-                        const cardElement = document.getElementById(targetCardId);
-
-                        // Use html2canvas to capture the div
-                        html2canvas(cardElement, {
-                            scale: 2, // Increase scale for higher resolution image
-                            useCORS: true, // Important for images loaded from other domains
-                            allowTaint: true, // Allows images from other origins to be drawn to canvas (might taint canvas)
-                            backgroundColor: '#ffffff', // Set a background color if card might have transparent parts
-                            // *** IMPORTANT CHANGE HERE ***
-                            // Use `ignoreElements` to exclude the button during screenshot
-                            ignoreElements: (element) => element.classList.contains('ignore-in-screenshot')
-                        }).then(function(canvas) {
-                            // Convert canvas to image data URL and trigger download
-                            const image = canvas.toDataURL('image/png');
-                            const link = document.createElement('a');
-                            link.href = image;
-                            link.download = fileName; // Suggested filename
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        }).catch(function(error) {
-                            console.error('Error converting card to image:', error);
-                            alert('Failed to download card as image. Check console for details.');
-                        });
-                    });
 
                 } else {
                     errorMessage.textContent = data.message || 'An unknown error occurred.';
